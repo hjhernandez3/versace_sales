@@ -3,6 +3,7 @@ library(dplyr)
 library(lubridate)
 library(ggplot2)
 library(broom)
+library(scales)
 
 sales <- read_excel("data/versaceSales.xlsx", sheet = "QUARTERLY")       
 ambassadors <- read_excel("data/versaceSales.xlsx", sheet = "AMBASSADORS")
@@ -32,7 +33,7 @@ sales_with_amb <- sales %>%
   ungroup()
 
 #graph including each region compared to the total
-ggplot() +
+p <- ggplot() +
   geom_line(data = sales_with_amb, 
             aes(x = Date, y = `Sales (Millions)`, color = Region), size = 1) +
   geom_point(data = sales_with_amb, 
@@ -41,12 +42,16 @@ ggplot() +
             aes(x = Date, y = total_sales), 
             color = "black", alpha = 0.3, size = 1.2, linetype = "dashed") +
   scale_size_continuous(range = c(2, 6)) +
+  scale_y_continuous(labels = dollar_format(prefix = "$", suffix = "M")) +
   labs(title = "Sales Over Time by Region with Total Sales",
        x = "Date",
        y = "Sales (Millions)",
        color = "Region",
-       size = "Ambassadors") +
+       size = "Ambassadors",
+       caption = "Graph by Hortencia Josefina Hernandez\n Data: Capri Holdings quarterly reports"
+  ) +
   theme_minimal()
+ggsave("images/sales_over_time.png", plot = p, width = 10, height = 6, dpi = 300)
 
 # Simple regression model
 model <- lm(`Sales (Millions)` ~ ambassador_count + Region, data = sales_with_amb)
