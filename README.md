@@ -18,7 +18,7 @@ This repository contains a **sales analysis project for Versace**, focused on un
 The data can be found [here](https://www.capriholdings.com/financials/quarterly-reports/default.aspx) in the Earnings Release PDFs. Versace was sold to Capri in late 2018/early 2019 and then sold to Prada on April 10, 2025.
 
 ## Report/Blog
-The report that ties along to this repository will be found [here]([https://visualizationsbyjosefina.com](https://visualizationsbyjosefina.com/2025/10/27/versace/)) once completed.
+The report that ties along to this repository will be found [here](https://visualizationsbyjosefina.com/2025/10/27/versace/) once completed.
 
 ## Key Findings (Preliminary)
 - EMEA consistently has higher sales than Asia or Americas.
