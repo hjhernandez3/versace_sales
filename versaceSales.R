@@ -4,6 +4,7 @@ library(lubridate)
 library(ggplot2)
 library(broom)
 library(scales)
+library(modelsummary)
 
 sales <- read_excel("data/versaceSales.xlsx", sheet = "QUARTERLY")       
 ambassadors <- read_excel("data/versaceSales.xlsx", sheet = "AMBASSADORS")
@@ -62,10 +63,10 @@ summary(model)
 sales_with_amb <- sales_with_amb %>%
   group_by(Region) %>%
   arrange(Date) %>%
-  mutate(cum_ambassadors = cumsum(ambassador_count)) %>%
+  
   ungroup()
 
-model_total <- lm(`Sales (Millions)`  ~ cum_ambassadors + factor(Quarter) + Region, data = sales_with_amb)
+model_total <- lm(`Sales (Millions)`  ~  ambassador_count + factor(Quarter) + Region, data = sales_with_amb)
 summary(model_total)
 
 
@@ -74,12 +75,22 @@ sales_with_lags <- sales_with_amb %>%
   arrange(Region, Date) %>%
   group_by(Region) %>%
   mutate(
-    cum_amb_1lag = lag(cum_ambassadors, n = 1, default = 0),
-    cum_amb_2lag = lag(cum_ambassadors, n = 2, default = 0)
+    amb_1lag = lag(ambassador_count, n = 1, default = 0),
+    amb_2lag = lag(ambassador_count, n = 2, default = 0)
   ) %>%
   ungroup()
 
-model_lagged <- lm(`Sales (Millions)` ~ cum_amb_1lag + cum_amb_2lag + factor(Quarter) + Region, 
+model_lagged <- lm(`Sales (Millions)` ~ ambassador_count+ amb_1lag + amb_2lag + factor(Quarter) + Region, 
                    data = sales_with_lags)
 
 summary(model_lagged)
+
+
+modelsummary(
+  list("Simple Model" = model,
+       "Quarterly Model" = model_total,
+       "Lagged Model" = model_lagged),
+  statistic = "({std.error})",
+  stars = TRUE,
+  output = "markdown"
+)
